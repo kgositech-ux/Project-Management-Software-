@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --bg-app: #0a0d13;
+  --bg-sidebar: #0e1219;
+  --bg-header: rgba(14, 18, 25, 0.95);
+  --bg-card: #121622;
+  --bg-card-hover: #161c28;
+  --bg-card-subtle: #0e121a;
+  --bg-card-secondary: #131823;
+  --bg-input: #161c28;
+  --border-primary: #1f2838;
+  --border-secondary: #253247;
+  --border-subtle: #1e2634;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-gold: #e5c07b;
+}
+
+html.light {
+  --bg-app: #f8fafc;
+  --bg-sidebar: #ffffff;
+  --bg-header: rgba(255, 255, 255, 0.95);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-card-subtle: #f8fafc;
+  --bg-card-secondary: #ffffff;
+  --bg-input: #ffffff;
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-subtle: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-gold: #b45309;
+}
+
+/* Scrollbar accessibility */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+
+html.light .scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+}

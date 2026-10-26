@@ -1,0 +1,121 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isHardcodedAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'servicewebsites6@gmail.com' ||
+        request.auth.token.email == 'mthethwapraisegodcebolenkosi@gmail.com'
+      );
+    }
+
+    function isAdmin() {
+      return isHardcodedAdmin() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // User profiles
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(userId) && (
+        request.auth.uid == userId || isAdmin()
+      );
+      allow update: if isSignedIn() && isValidId(userId) && (
+        (request.auth.uid == userId && (!incoming().diff(existing()).affectedKeys().hasAny(['role']))) ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Projects collection
+    match /projects/{projectId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(projectId) && (
+        incoming().title is string && incoming().title.size() <= 200 &&
+        incoming().code is string && incoming().code.size() <= 50
+      );
+      allow update: if isSignedIn() && isValidId(projectId);
+      allow delete: if isAdmin();
+
+      // Project Tasks subcollection
+      match /tasks/{taskId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(taskId) && (
+          incoming().title is string && incoming().title.size() <= 200
+        );
+        allow update: if isSignedIn() && isValidId(taskId);
+        allow delete: if isSignedIn() && isValidId(taskId);
+      }
+
+      // Project Milestones subcollection
+      match /milestones/{milestoneId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(milestoneId) && (
+          incoming().title is string && incoming().title.size() <= 200
+        );
+        allow update: if isSignedIn() && isValidId(milestoneId);
+        allow delete: if isSignedIn() && isValidId(milestoneId);
+      }
+
+      // Project Documents subcollection
+      match /documents/{docId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(docId) && (
+          incoming().title is string && incoming().title.size() <= 200
+        );
+        allow update: if isSignedIn() && isValidId(docId);
+        allow delete: if isSignedIn() && isValidId(docId);
+      }
+
+      // Project Updates subcollection
+      match /updates/{updateId} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && isValidId(updateId) && (
+          incoming().title is string && incoming().title.size() <= 200
+        );
+        allow update: if isSignedIn() && isValidId(updateId);
+        allow delete: if isAdmin();
+      }
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(notificationId);
+      allow update: if isSignedIn() && isValidId(notificationId);
+      allow delete: if isSignedIn() && isValidId(notificationId);
+    }
+
+    // Clients & Partners
+    match /clients/{clientId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(clientId);
+      allow delete: if isAdmin();
+    }
+  }
+}

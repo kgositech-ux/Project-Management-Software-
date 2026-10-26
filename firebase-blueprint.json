@@ -1,0 +1,181 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role-based access permissions",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "project_manager", "collaborator", "viewer"] },
+        "department": { "type": "string" },
+        "phone": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "displayName", "role"]
+    },
+    "project": {
+      "title": "Project",
+      "description": "Top-level project tracking entity for Godongwane Progressive Projects",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "code": { "type": "string" },
+        "status": { "type": "string", "enum": ["planning", "active", "on_hold", "completed", "archived"] },
+        "clientName": { "type": "string" },
+        "clientEmail": { "type": "string" },
+        "clientPhone": { "type": "string" },
+        "location": { "type": "string" },
+        "budgetZAR": { "type": "number" },
+        "startDate": { "type": "string" },
+        "targetCompletionDate": { "type": "string" },
+        "completionPercentage": { "type": "number" },
+        "managerEmail": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["title", "code", "status", "budgetZAR", "createdBy"]
+    },
+    "task": {
+      "title": "Task",
+      "description": "Actionable task item inside a project",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["todo", "in_progress", "review", "completed"] },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "assigneeEmail": { "type": "string" },
+        "assigneeName": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "progressPercentage": { "type": "number" },
+        "milestoneId": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["projectId", "title", "status", "priority", "createdBy"]
+    },
+    "milestone": {
+      "title": "Milestone",
+      "description": "Progress milestone tracking phases and target deadlines",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "in_progress", "completed", "delayed"] },
+        "progress": { "type": "number" },
+        "deliverables": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["projectId", "title", "dueDate", "status"]
+    },
+    "document": {
+      "title": "Document",
+      "description": "Centralized shared project document or blueprint specification",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string", "enum": ["blueprint", "contract", "report", "compliance", "invoice", "other"] },
+        "fileType": { "type": "string" },
+        "fileSize": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "uploadedByEmail": { "type": "string" },
+        "uploadedByName": { "type": "string" },
+        "version": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["projectId", "title", "category", "uploadedByEmail"]
+    },
+    "activityUpdate": {
+      "title": "ActivityUpdate",
+      "description": "Real-time project status report or broadcast log",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string" },
+        "authorEmail": { "type": "string" },
+        "authorName": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "type": { "type": "string", "enum": ["status_report", "milestone_reached", "task_completed", "document_added", "alert"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["projectId", "authorEmail", "title", "summary", "type"]
+    },
+    "notification": {
+      "title": "Notification",
+      "description": "Automated progress and role notifications",
+      "type": "object",
+      "properties": {
+        "recipientEmail": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["info", "alert", "success", "warning"] },
+        "read": { "type": "boolean" },
+        "projectId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["recipientEmail", "title", "message", "type", "read"]
+    },
+    "client": {
+      "title": "Client",
+      "description": "Client and partner repository matching agency contacts",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "contactPerson": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "location": { "type": "string" },
+        "services": { "type": "string" },
+        "activeProjectsCount": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "userProfile" },
+      "description": "User profile with role-based access information"
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "project" },
+      "description": "Core project records for Godongwane Progressive Projects"
+    },
+    "/projects/{projectId}/tasks/{taskId}": {
+      "schema": { "$ref": "task" },
+      "description": "Tasks associated with a specific project"
+    },
+    "/projects/{projectId}/milestones/{milestoneId}": {
+      "schema": { "$ref": "milestone" },
+      "description": "Milestones and progress delivery timeline for a project"
+    },
+    "/projects/{projectId}/documents/{docId}": {
+      "schema": { "$ref": "document" },
+      "description": "Documents and blueprints stored in the centralized repository"
+    },
+    "/projects/{projectId}/updates/{updateId}": {
+      "schema": { "$ref": "activityUpdate" },
+      "description": "Real-time status reporting and broadcast updates for a project"
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "notification" },
+      "description": "Automated notifications sent to project members and admins"
+    },
+    "/clients/{clientId}": {
+      "schema": { "$ref": "client" },
+      "description": "Clients and partners directory"
+    }
+  }
+}
